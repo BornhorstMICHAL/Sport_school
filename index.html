@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sportovní úspěchy</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: black; color: white; }
+        .container { display: flex; height: 100vh; align-items: center; justify-content: center; }
+        .photo, .info { width: 50%; text-align: center; }
+        img { max-width: 100%; height: auto; border-radius: 10px; }
+        .info { font-size: 24px; padding: 20px; }
+        .add-button { position: absolute; bottom: 20px; right: 20px; padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="photo"><img id="studentPhoto" src="" alt="Fotografie"></div>
+        <div class="info">
+            <h2 id="studentName"></h2>
+            <p id="studentClass"></p>
+            <p id="achievement"></p>
+            <p id="eventDate"></p>
+        </div>
+    </div>
+    <button class="add-button" onclick="window.location.href='add_success.php'">Přidat úspěch</button>
+    
+    <script>
+        let achievements = [];
+        let index = 0;
+
+        async function fetchAchievements() {
+            const response = await fetch('fetch_success.php');
+            achievements = await response.json();
+            showAchievement();
+        }
+
+        function showAchievement() {
+            if (achievements.length > 0) {
+                let data = achievements[index];
+                document.getElementById('studentPhoto').src = data.photo_url;
+                document.getElementById('studentName').innerText = data.student_name;
+                document.getElementById('studentClass').innerText = `Třída: ${data.class}`;
+                document.getElementById('achievement').innerText = data.achievement;
+                document.getElementById('eventDate').innerText = `Datum: ${data.event_date}`;
+                index = (index + 1) % achievements.length;
+            }
+        }
+        
+        setInterval(showAchievement, 5000);
+        fetchAchievements();
+    </script>
+</body>
+</html>
